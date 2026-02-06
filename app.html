@@ -118,32 +118,12 @@
             <div class="sessions-container">
                 <div class="sessions-header">
                     <h2>Conversation History</h2>
-                    <button class="btn btn-primary btn-sm">New Chat</button>
+                    <button class="btn btn-primary btn-sm" id="new-chat-btn">New Chat</button>
                 </div>
-                <div class="sessions-list">
-                    <div class="session-card active">
-                        <div class="session-icon">💬</div>
-                        <div class="session-content">
-                            <span class="session-title">Current Session</span>
-                            <span class="session-preview">Hey there, operator! Welcome to GLTCH...</span>
-                        </div>
-                        <span class="session-time">Now</span>
-                    </div>
-                    <div class="session-card">
-                        <div class="session-icon">🔧</div>
-                        <div class="session-content">
-                            <span class="session-title">API Integration Help</span>
-                            <span class="session-preview">I'll help you set up the REST API...</span>
-                        </div>
-                        <span class="session-time">2h ago</span>
-                    </div>
-                    <div class="session-card">
-                        <div class="session-icon">🎨</div>
-                        <div class="session-content">
-                            <span class="session-title">UI Design Discussion</span>
-                            <span class="session-preview">The cyberpunk aesthetic looks great...</span>
-                        </div>
-                        <span class="session-time">Yesterday</span>
+                <div class="sessions-list" id="sessions-list">
+                    <!-- Sessions will be loaded dynamically -->
+                    <div class="sessions-empty" id="sessions-empty">
+                        <p>💬 No conversations yet. Start chatting to create your first session!</p>
                     </div>
                 </div>
             </div>

@@ -195,14 +195,89 @@ document.addEventListener('DOMContentLoaded', () => {
         return div.innerHTML;
     }
 
-    // Session cards click
-    document.querySelectorAll('.session-card').forEach(card => {
-        card.addEventListener('click', () => {
-            document.querySelectorAll('.session-card').forEach(c => c.classList.remove('active'));
-            card.classList.add('active');
+    // Load sessions from API
+    async function loadSessions() {
+        const sessionsList = document.getElementById('sessions-list');
+        const sessionsEmpty = document.getElementById('sessions-empty');
 
-            // Switch to chat view
+        try {
+            if (window.gltchAPI) {
+                const response = await window.gltchAPI.getSessions();
+                const sessions = response.sessions || [];
+
+                if (sessions.length === 0) {
+                    sessionsEmpty.style.display = 'block';
+                    return;
+                }
+
+                sessionsEmpty.style.display = 'none';
+
+                // Clear existing and render sessions
+                sessionsList.innerHTML = '';
+                sessions.forEach((session, index) => {
+                    const isActive = session.id === currentSessionId;
+                    const card = document.createElement('div');
+                    card.className = `session-card${isActive ? ' active' : ''}`;
+                    card.dataset.sessionId = session.id;
+
+                    const timeAgo = getTimeAgo(session.created_at);
+
+                    card.innerHTML = `
+                        <div class="session-icon">💬</div>
+                        <div class="session-content">
+                            <span class="session-title">${escapeHtml(session.title || 'Chat Session')}</span>
+                            <span class="session-preview">${escapeHtml(session.preview || 'Click to open...')}</span>
+                        </div>
+                        <span class="session-time">${timeAgo}</span>
+                    `;
+
+                    card.addEventListener('click', () => selectSession(session.id));
+                    sessionsList.appendChild(card);
+                });
+            }
+        } catch (error) {
+            console.warn('Could not load sessions:', error.message);
+        }
+    }
+
+    function getTimeAgo(dateStr) {
+        if (!dateStr) return 'Just now';
+        const date = new Date(dateStr);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
+
+        if (diffMins < 1) return 'Now';
+        if (diffMins < 60) return `${diffMins}m ago`;
+        if (diffHours < 24) return `${diffHours}h ago`;
+        if (diffDays === 1) return 'Yesterday';
+        return `${diffDays}d ago`;
+    }
+
+    function selectSession(sessionId) {
+        currentSessionId = sessionId;
+        document.querySelectorAll('.session-card').forEach(c => c.classList.remove('active'));
+        const card = document.querySelector(`[data-session-id="${sessionId}"]`);
+        if (card) card.classList.add('active');
+
+        // Switch to chat view
+        document.querySelector('[data-view="chat"]').click();
+
+        // TODO: Load session messages
+    }
+
+    // New Chat button
+    const newChatBtn = document.getElementById('new-chat-btn');
+    if (newChatBtn) {
+        newChatBtn.addEventListener('click', () => {
+            currentSessionId = null;
+            messagesContainer.innerHTML = '';
             document.querySelector('[data-view="chat"]').click();
         });
-    });
+    }
+
+    // Load sessions when sessions tab is clicked
+    document.querySelector('[data-view="sessions"]')?.addEventListener('click', loadSessions);
 });
