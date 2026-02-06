@@ -67,6 +67,34 @@ app = FastAPI(
     version="0.1.0"
 )
 
+# ============ Security Middleware ============
+
+# Rate Limiting (slowapi)
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
+
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# HTTPS Redirect (production only)
+if not settings.debug:
+    app.add_middleware(HTTPSRedirectMiddleware)
+
+# Security Headers Middleware
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    if not settings.debug:
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    return response
+
 # CORS
 app.add_middleware(
     CORSMiddleware,
@@ -77,13 +105,31 @@ app.add_middleware(
 )
 
 
-# ============ Pydantic Models ============
+# ============ Pydantic Models with Validation ============
+from pydantic import field_validator, EmailStr
+import re
 
 class UserCreate(BaseModel):
     callsign: str
     email: str
     provider: LLMProvider = LLMProvider.OPENAI
     key_mode: KeyMode = KeyMode.MANAGED
+    
+    @field_validator('callsign')
+    @classmethod
+    def validate_callsign(cls, v):
+        if not v or len(v) < 2 or len(v) > 30:
+            raise ValueError('Callsign must be 2-30 characters')
+        if not re.match(r'^[a-zA-Z0-9_-]+$', v):
+            raise ValueError('Callsign can only contain letters, numbers, underscores, hyphens')
+        return v.strip()
+    
+    @field_validator('email')
+    @classmethod
+    def validate_email(cls, v):
+        if not v or '@' not in v or len(v) > 100:
+            raise ValueError('Invalid email address')
+        return v.strip().lower()
 
 
 class UserSettings(BaseModel):
@@ -93,11 +139,30 @@ class UserSettings(BaseModel):
     anthropic_key: Optional[str] = None
     google_key: Optional[str] = None
     xai_key: Optional[str] = None
+    
+    @field_validator('openai_key', 'anthropic_key', 'google_key', 'xai_key')
+    @classmethod
+    def validate_api_key(cls, v):
+        if v is not None:
+            if len(v) < 10 or len(v) > 200:
+                raise ValueError('Invalid API key length')
+            # Basic sanitization
+            v = v.strip()
+        return v
 
 
 class ChatMessage(BaseModel):
     content: str
     session_id: Optional[str] = None
+    
+    @field_validator('content')
+    @classmethod
+    def validate_content(cls, v):
+        if not v or len(v.strip()) == 0:
+            raise ValueError('Message cannot be empty')
+        if len(v) > 10000:
+            raise ValueError('Message too long (max 10000 characters)')
+        return v.strip()
 
 
 class ChatResponse(BaseModel):
@@ -236,13 +301,17 @@ async def set_personality_mode(
 # ============ Search Endpoints ============
 
 @app.get("/api/search")
+@limiter.limit("30/minute")  # Rate limit: 30 searches per minute
 async def web_search(
+    request: Request,
     q: str,
     current_user: dict = Depends(get_auth_dependency())
 ):
     """Search the web using DuckDuckGo"""
     if not q or len(q) < 2:
         raise HTTPException(status_code=400, detail="Query too short")
+    if len(q) > 200:
+        raise HTTPException(status_code=400, detail="Query too long")
     
     results = await search_web(q, num_results=5)
     return {
@@ -255,7 +324,9 @@ async def web_search(
 # ============ Chat Endpoints ============
 
 @app.post("/api/chat", response_model=ChatResponse)
+@limiter.limit("60/minute")  # Rate limit: 60 messages per minute
 async def chat(
+    request: Request,
     message: ChatMessage,
     current_user: dict = Depends(get_auth_dependency())
 ):
