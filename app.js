@@ -15,6 +15,23 @@ document.addEventListener('DOMContentLoaded', () => {
         'settings': 'Settings'
     };
 
+    // Mobile menu toggle
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const sidebar = document.querySelector('.sidebar');
+
+    if (mobileMenuBtn && sidebar) {
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+
+        // Close menu when clicking a nav item
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+            });
+        });
+    }
+
     // Load user stats on page load
     loadUserStats();
 
@@ -288,8 +305,46 @@ document.addEventListener('DOMContentLoaded', () => {
         // Switch to chat view
         document.querySelector('[data-view="chat"]').click();
 
-        // TODO: Load session messages
+        // Load session messages
+        loadSessionMessages(sessionId);
     }
+
+    async function loadSessionMessages(sessionId) {
+        const messagesContainer = document.getElementById('messages');
+        if (!messagesContainer) return;
+
+        // Clear current messages
+        messagesContainer.innerHTML = '';
+
+        try {
+            if (window.gltchAPI) {
+                const response = await fetch(`${window.gltchAPI.baseUrl}/api/sessions/${sessionId}/messages`, {
+                    headers: window.gltchAPI.token ? {
+                        'Authorization': `Bearer ${window.gltchAPI.token}`
+                    } : {}
+                });
+
+                if (!response.ok) throw new Error('Failed to load messages');
+
+                const data = await response.json();
+                const messages = data.messages || [];
+
+                if (messages.length === 0) {
+                    // Show welcome message if no history
+                    addMessage('assistant', "Hey there, operator! 💜 Welcome to GLTCH Cloud. What shall we work on?");
+                } else {
+                    // Render all messages
+                    messages.forEach(msg => {
+                        addMessage(msg.role, msg.content);
+                    });
+                }
+            }
+        } catch (error) {
+            console.warn('Could not load session messages:', error.message);
+            addMessage('assistant', "💜 Continuing this conversation...");
+        }
+    }
+
 
     // New Chat button
     const newChatBtn = document.getElementById('new-chat-btn');
