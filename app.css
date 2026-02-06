@@ -201,95 +201,161 @@
     display: none;
 }
 
-/* Chat Container */
+/* Chat Container - Terminal Style */
 .chat-container {
     flex: 1;
     display: flex;
     flex-direction: column;
     max-width: 900px;
-    margin: 0 auto;
+    margin: 24px auto;
     width: 100%;
     padding: 0 24px;
 }
 
+/* Terminal Window */
 .chat-messages {
     flex: 1;
     overflow-y: auto;
-    padding: 24px 0;
+    background: linear-gradient(180deg, rgba(15, 15, 25, 0.95) 0%, rgba(10, 10, 18, 0.98) 100%);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    border-radius: 12px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    position: relative;
 }
 
+/* Terminal Header with Dots */
+.chat-messages::before {
+    content: '●  ●  ●   gltch.app';
+    display: block;
+    padding: 12px 16px;
+    background: rgba(0, 0, 0, 0.5);
+    border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+    font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', monospace;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+}
+
+.chat-messages::before {
+    color: transparent;
+    background-image:
+        radial-gradient(circle at 12px 50%, #ff5f56 4px, transparent 4px),
+        radial-gradient(circle at 28px 50%, #ffbd2e 4px, transparent 4px),
+        radial-gradient(circle at 44px 50%, #27ca40 4px, transparent 4px);
+    background-repeat: no-repeat;
+    background-position: 0 0, 0 0, 0 0;
+    padding-left: 64px;
+    color: var(--text-muted);
+}
+
+/* Terminal Messages Container */
+.messages-inner {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Message Styling - Terminal Style */
 .message {
     display: flex;
-    gap: 16px;
-    max-width: 85%;
+    gap: 0;
+    max-width: 100%;
+    font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', monospace;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    padding: 8px 20px;
 }
 
 .message.user {
-    flex-direction: row-reverse;
-    margin-left: auto;
+    flex-direction: row;
+    margin-left: 0;
 }
 
+/* Hide avatars in terminal mode */
 .message-avatar {
-    width: 40px;
-    height: 40px;
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.25rem;
-    flex-shrink: 0;
-}
-
-.message.user .message-avatar {
-    background: var(--gradient-primary);
-    border: none;
-    font-size: 0.875rem;
-    font-weight: 600;
+    display: none;
 }
 
 .message-content {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
+    flex-direction: row;
+    gap: 8px;
+    width: 100%;
+    align-items: flex-start;
 }
 
+/* Hide timestamps in terminal mode */
 .message-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    display: none;
 }
 
 .message-name {
     font-weight: 600;
     font-size: 0.9rem;
+    white-space: nowrap;
 }
 
 .message-time {
-    font-size: 0.75rem;
-    color: var(--text-muted);
+    display: none;
 }
 
+/* Terminal Prompt Style */
 .message-text {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 14px 18px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
     line-height: 1.6;
-    color: var(--text-secondary);
-}
-
-.message.user .message-text {
-    background: rgba(168, 85, 247, 0.15);
-    border-color: rgba(168, 85, 247, 0.3);
     color: var(--text-primary);
 }
 
-/* Chat Input */
+.message::before {
+    font-weight: 600;
+    white-space: nowrap;
+    margin-right: 8px;
+}
+
+.message.user::before {
+    content: 'you:';
+    color: #06b6d4;
+    /* cyan */
+}
+
+.message.assistant::before {
+    content: 'GLTCH:';
+    color: var(--neon-purple);
+}
+
+.message.user .message-text {
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+}
+
+.message.assistant .message-text {
+    color: var(--text-secondary);
+}
+
+.message.loading .message-text {
+    color: var(--text-muted);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Chat Input - Terminal Style */
 .chat-input-container {
     padding: 16px 0 24px;
 }
@@ -298,16 +364,24 @@
     display: flex;
     align-items: flex-end;
     gap: 12px;
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 12px 16px;
+    background: linear-gradient(180deg, rgba(15, 15, 25, 0.95) 0%, rgba(10, 10, 18, 0.98) 100%);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    border-radius: 12px;
+    padding: 16px 20px;
     transition: all 0.2s;
 }
 
 .chat-input-wrapper:focus-within {
     border-color: var(--neon-purple);
-    box-shadow: 0 0 0 3px var(--neon-purple-glow);
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+}
+
+.chat-input-wrapper::before {
+    content: 'you:';
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    color: #06b6d4;
+    white-space: nowrap;
 }
 
 #chat-input {
@@ -315,8 +389,8 @@
     background: transparent;
     border: none;
     color: var(--text-primary);
-    font-size: 1rem;
-    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', monospace;
     resize: none;
     max-height: 150px;
     outline: none;
@@ -327,11 +401,11 @@
 }
 
 .send-btn {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     background: var(--gradient-primary);
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     color: white;
     cursor: pointer;
     display: flex;
@@ -351,6 +425,7 @@
     font-size: 0.8rem;
     color: var(--text-muted);
 }
+
 
 /* Sessions Container */
 .sessions-container {
