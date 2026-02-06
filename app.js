@@ -303,4 +303,66 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load sessions when sessions tab is clicked
     document.querySelector('[data-view="sessions"]')?.addEventListener('click', loadSessions);
+
+    // Personality mode selector
+    const personalitySelect = document.getElementById('personality-select');
+    const personalityDesc = document.getElementById('personality-description');
+    const modeDescriptions = {
+        'operator': 'Tactical. Efficient. Mission-oriented.',
+        'cyberpunk': 'Street hacker energy. Edgy slang.',
+        'loyal': 'Ride-or-die. Got your back.',
+        'unhinged': 'Chaotic. Wild. Unpredictable.'
+    };
+
+    if (personalitySelect) {
+        personalitySelect.addEventListener('change', async (e) => {
+            const mode = e.target.value;
+
+            // Update description
+            if (personalityDesc) {
+                personalityDesc.textContent = modeDescriptions[mode] || '';
+            }
+
+            // Update badges
+            document.querySelectorAll('.personality-badge').forEach(badge => {
+                badge.classList.toggle('active', badge.dataset.mode === mode);
+            });
+
+            // Call API to save preference
+            try {
+                if (window.gltchAPI) {
+                    await fetch(`${window.gltchAPI.baseUrl}/api/personality/mode?mode=${mode}`, {
+                        method: 'PATCH',
+                        headers: window.gltchAPI.token ? {
+                            'Authorization': `Bearer ${window.gltchAPI.token}`
+                        } : {}
+                    });
+                    console.log('Personality mode set to:', mode);
+                }
+            } catch (error) {
+                console.warn('Failed to save personality mode:', error);
+            }
+        });
+    }
+
+    // Web search function (can be triggered by /search command)
+    async function webSearch(query) {
+        try {
+            if (window.gltchAPI) {
+                const response = await fetch(`${window.gltchAPI.baseUrl}/api/search?q=${encodeURIComponent(query)}`, {
+                    headers: window.gltchAPI.token ? {
+                        'Authorization': `Bearer ${window.gltchAPI.token}`
+                    } : {}
+                });
+                const data = await response.json();
+                return data.formatted || 'No results found.';
+            }
+        } catch (error) {
+            console.warn('Search failed:', error);
+            return 'Search failed. Try again later.';
+        }
+    }
+
+    // Expose search function
+    window.gltchSearch = webSearch;
 });

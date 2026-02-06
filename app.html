@@ -185,31 +185,25 @@
                 </div>
 
                 <div class="settings-section">
-                    <h3>Personality</h3>
+                    <h3>🎭 Personality Mode</h3>
                     <div class="settings-card">
                         <div class="setting-row">
                             <div class="setting-info">
-                                <strong>Mode</strong>
-                                <span>Operator</span>
+                                <strong>GLTCH Personality</strong>
+                                <span id="personality-description">Tactical. Efficient. Mission-oriented.</span>
                             </div>
-                            <select class="setting-select">
-                                <option selected>Operator</option>
-                                <option>Cyberpunk</option>
-                                <option>Loyal</option>
-                                <option>Unhinged 🔒</option>
+                            <select class="setting-select" id="personality-select">
+                                <option value="operator" selected>Operator</option>
+                                <option value="cyberpunk">Cyberpunk</option>
+                                <option value="loyal">Loyal</option>
+                                <option value="unhinged">Unhinged 🔮</option>
                             </select>
                         </div>
-                        <div class="setting-row">
-                            <div class="setting-info">
-                                <strong>Mood</strong>
-                                <span>Focused</span>
-                            </div>
-                            <select class="setting-select">
-                                <option selected>Focused</option>
-                                <option>Calm</option>
-                                <option>Feral 🔒</option>
-                                <option>Affectionate 🔒</option>
-                            </select>
+                        <div class="personality-badges">
+                            <span class="personality-badge" data-mode="operator">🎯 Tactical</span>
+                            <span class="personality-badge" data-mode="cyberpunk">⚡ Edgy</span>
+                            <span class="personality-badge" data-mode="loyal">💜 Devoted</span>
+                            <span class="personality-badge" data-mode="unhinged">🌀 Chaotic</span>
                         </div>
                     </div>
                 </div>

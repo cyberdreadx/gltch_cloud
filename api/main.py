@@ -20,6 +20,7 @@ from models import LLMProvider, KeyMode, SubscriptionTier
 from llm import route_chat, FREE_TIER_MODEL
 from billing import calculate_cost, get_tier_limits, create_customer, create_checkout_session
 from personality import PersonalityMode, get_system_prompt, list_modes
+from search import search_web, format_search_results
 
 settings = get_settings()
 
@@ -230,6 +231,25 @@ async def set_personality_mode(
     persist_data()
     
     return {"message": f"Personality mode set to {mode}", "mode": mode}
+
+
+# ============ Search Endpoints ============
+
+@app.get("/api/search")
+async def web_search(
+    q: str,
+    current_user: dict = Depends(get_auth_dependency())
+):
+    """Search the web using DuckDuckGo"""
+    if not q or len(q) < 2:
+        raise HTTPException(status_code=400, detail="Query too short")
+    
+    results = await search_web(q, num_results=5)
+    return {
+        "query": q,
+        "results": results,
+        "formatted": format_search_results(results)
+    }
 
 
 # ============ Chat Endpoints ============
