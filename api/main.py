@@ -10,6 +10,10 @@ from typing import Optional, List
 from datetime import datetime, date
 import uuid
 
+import stripe
+import json
+import os
+
 from config import get_settings
 from auth import get_auth_dependency
 from models import LLMProvider, KeyMode, SubscriptionTier
@@ -17,6 +21,38 @@ from llm import route_chat, FREE_TIER_MODEL
 from billing import calculate_cost, get_tier_limits, create_customer, create_checkout_session
 
 settings = get_settings()
+
+# Data persistence directory
+DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+os.makedirs(DATA_DIR, exist_ok=True)
+
+# Helper functions for JSON persistence
+def load_json(filename, default=None):
+    filepath = os.path.join(DATA_DIR, filename)
+    if os.path.exists(filepath):
+        try:
+            with open(filepath, 'r') as f:
+                return json.load(f)
+        except:
+            return default if default is not None else {}
+    return default if default is not None else {}
+
+def save_json(filename, data):
+    filepath = os.path.join(DATA_DIR, filename)
+    with open(filepath, 'w') as f:
+        json.dump(data, f, indent=2, default=str)
+
+# Load data on startup
+users_db = load_json("users.json", {})
+sessions_db = load_json("sessions.json", {})
+messages_db = load_json("messages.json", {})
+
+def persist_data():
+    """Save all data to disk"""
+    save_json("users.json", users_db)
+    save_json("sessions.json", sessions_db)
+    save_json("messages.json", messages_db)
+
 
 app = FastAPI(
     title="GLTCH Cloud API",
@@ -32,11 +68,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# In-memory storage (replace with database in production)
-users_db = {}
-sessions_db = {}
-messages_db = {}
 
 
 # ============ Pydantic Models ============
@@ -101,6 +132,7 @@ async def register(user_data: UserCreate, current_user: dict = Depends(get_auth_
     if stripe_customer_id:
         user["stripe_customer_id"] = stripe_customer_id
     
+    persist_data()  # Save to disk
     return {"message": "User registered", "user": user}
 
 
@@ -260,6 +292,8 @@ async def chat(
         result["input_tokens"],
         result["output_tokens"]
     )
+    
+    persist_data()  # Save sessions and messages to disk
     
     return ChatResponse(
         content=result["content"],
