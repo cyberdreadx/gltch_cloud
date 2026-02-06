@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - GLTCH Cloud</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="app.css">
+</head>
+
+<body class="app-page">
+    <div class="bg-grid"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">💜</span>
+                <span class="logo-text">GLTCH</span>
+            </a>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-view="chat">
+                <span class="nav-icon">💬</span>
+                <span>Chat</span>
+            </a>
+            <a href="#" class="nav-item" data-view="sessions">
+                <span class="nav-icon">📜</span>
+                <span>Sessions</span>
+            </a>
+            <a href="#" class="nav-item" data-view="wallet">
+                <span class="nav-icon">💎</span>
+                <span>Wallet</span>
+            </a>
+            <a href="#" class="nav-item" data-view="settings">
+                <span class="nav-icon">⚙️</span>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">CD</div>
+                <div class="user-details">
+                    <span class="user-name">CyberDread</span>
+                    <span class="user-tier">Pro Plan</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <h1 class="page-title">Chat</h1>
+                <span class="status-badge online">
+                    <span class="status-dot"></span>
+                    Connected
+                </span>
+            </div>
+            <div class="header-right">
+                <div class="provider-badge">
+                    <span class="provider-icon">🧠</span>
+                    <span>GPT-4o</span>
+                </div>
+                <div class="usage-badge">
+                    <span>1,234 tokens today</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Chat View -->
+        <div class="view-container" id="chat-view">
+            <div class="chat-container">
+                <div class="chat-messages" id="messages">
+                    <!-- Welcome message -->
+                    <div class="message assistant">
+                        <div class="message-avatar">💜</div>
+                        <div class="message-content">
+                            <div class="message-header">
+                                <span class="message-name">GLTCH</span>
+                                <span class="message-time">Just now</span>
+                            </div>
+                            <div class="message-text">
+                                Hey there, operator! 💜 Welcome to GLTCH Cloud. I'm your AI agent with a bit of edge.
+                                What shall we work on today?
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-input-container">
+                    <div class="chat-input-wrapper">
+                        <textarea id="chat-input" placeholder="Message GLTCH..." rows="1"></textarea>
+                        <button class="send-btn" id="send-btn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="chat-hints">
+                        <span>Press Enter to send • Shift+Enter for new line</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sessions View (hidden) -->
+        <div class="view-container hidden" id="sessions-view">
+            <div class="sessions-container">
+                <div class="sessions-header">
+                    <h2>Conversation History</h2>
+                    <button class="btn btn-primary btn-sm">New Chat</button>
+                </div>
+                <div class="sessions-list">
+                    <div class="session-card active">
+                        <div class="session-icon">💬</div>
+                        <div class="session-content">
+                            <span class="session-title">Current Session</span>
+                            <span class="session-preview">Hey there, operator! Welcome to GLTCH...</span>
+                        </div>
+                        <span class="session-time">Now</span>
+                    </div>
+                    <div class="session-card">
+                        <div class="session-icon">🔧</div>
+                        <div class="session-content">
+                            <span class="session-title">API Integration Help</span>
+                            <span class="session-preview">I'll help you set up the REST API...</span>
+                        </div>
+                        <span class="session-time">2h ago</span>
+                    </div>
+                    <div class="session-card">
+                        <div class="session-icon">🎨</div>
+                        <div class="session-content">
+                            <span class="session-title">UI Design Discussion</span>
+                            <span class="session-preview">The cyberpunk aesthetic looks great...</span>
+                        </div>
+                        <span class="session-time">Yesterday</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wallet View (hidden) -->
+        <div class="view-container hidden" id="wallet-view">
+            <div class="wallet-container">
+                <div class="wallet-card">
+                    <div class="wallet-header">
+                        <h2>Your Wallet</h2>
+                        <span class="network-badge">BASE</span>
+                    </div>
+                    <div class="wallet-address">
+                        <span>0x7a3F...k9Bc</span>
+                        <button class="copy-btn" onclick="alert('Copied!')">📋</button>
+                    </div>
+                    <div class="wallet-balance">
+                        <span class="balance-label">Balance</span>
+                        <span class="balance-value">0.00 ETH</span>
+                    </div>
+                    <div class="wallet-actions">
+                        <button class="btn btn-ghost">Receive</button>
+                        <button class="btn btn-primary">Send</button>
+                    </div>
+                </div>
+                <div class="wallet-note">
+                    <p>💡 Your wallet keys are stored securely. Only you have access.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings View (hidden) -->
+        <div class="view-container hidden" id="settings-view">
+            <div class="settings-container">
+                <h2>Settings</h2>
+
+                <div class="settings-section">
+                    <h3>AI Provider</h3>
+                    <div class="settings-card">
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <strong>Current Provider</strong>
+                                <span>OpenAI GPT-4o</span>
+                            </div>
+                            <button class="btn btn-ghost btn-sm">Change</button>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <strong>API Key Mode</strong>
+                                <span>Using GLTCH Keys</span>
+                            </div>
+                            <button class="btn btn-ghost btn-sm">Switch to BYOK</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>Personality</h3>
+                    <div class="settings-card">
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <strong>Mode</strong>
+                                <span>Operator</span>
+                            </div>
+                            <select class="setting-select">
+                                <option selected>Operator</option>
+                                <option>Cyberpunk</option>
+                                <option>Loyal</option>
+                                <option>Unhinged 🔒</option>
+                            </select>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <strong>Mood</strong>
+                                <span>Focused</span>
+                            </div>
+                            <select class="setting-select">
+                                <option selected>Focused</option>
+                                <option>Calm</option>
+                                <option>Feral 🔒</option>
+                                <option>Affectionate 🔒</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>Subscription</h3>
+                    <div class="settings-card">
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <strong>Current Plan</strong>
+                                <span>Pro - $15/month</span>
+                            </div>
+                            <button class="btn btn-ghost btn-sm">Manage</button>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <strong>Usage This Month</strong>
+                                <span>12,456 tokens ($0.18)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="api-client.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

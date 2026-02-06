@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GLTCH Cloud - Your AI Agent in the Cloud</title>
+    <meta name="description"
+        content="GLTCH Cloud - A powerful AI agent with personality, hosted in the cloud. No setup required. Choose your LLM provider and start chatting.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💜</text></svg>">
+</head>
+
+<body>
+    <!-- Animated Background -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <span class="logo-icon">💜</span>
+                <span class="logo-text">GLTCH</span>
+                <span class="logo-cloud">CLOUD</span>
+            </a>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#demo">Demo</a>
+            </div>
+            <div class="nav-actions">
+                <a href="login.html" class="btn btn-ghost">Login</a>
+                <a href="signup.html" class="btn btn-primary">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="badge-dot"></span>
+                Now in Public Beta
+            </div>
+            <h1 class="hero-title">
+                Your AI Agent<br>
+                <span class="gradient-text">In The Cloud</span>
+            </h1>
+            <p class="hero-subtitle">
+                GLTCH is a command-driven AI agent with personality.
+                Choose your LLM provider, chat from anywhere, and let her handle the rest.
+            </p>
+            <div class="hero-cta">
+                <a href="signup.html" class="btn btn-primary btn-large">
+                    <span>Start Free</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </a>
+                <a href="#demo" class="btn btn-ghost btn-large">
+                    <span>Watch Demo</span>
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-value">25</span>
+                    <span class="stat-label">Free msgs/day</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-value">3+</span>
+                    <span class="stat-label">LLM Providers</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-value">0</span>
+                    <span class="stat-label">Setup Required</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="terminal">
+                <div class="terminal-header">
+                    <div class="terminal-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <span class="terminal-title">gltch.app</span>
+                </div>
+                <div class="terminal-body">
+                    <div class="terminal-line">
+                        <span class="prompt">you:</span>
+                        <span class="typing" id="user-input"></span>
+                    </div>
+                    <div class="terminal-line response">
+                        <span class="prompt gltch">GLTCH:</span>
+                        <span id="gltch-response"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Why GLTCH Cloud?</h2>
+                <p class="section-subtitle">All the power of GLTCH, none of the setup</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3>Choose Your Brain</h3>
+                    <p>GPT-4, Claude, Gemini - pick the LLM that fits your vibe. Bring your own API key or use ours.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💜</div>
+                    <h3>Personality Modes</h3>
+                    <p>Operator, Cyberpunk, Loyal, or Unhinged. GLTCH isn't just an assistant - she has opinions.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Zero Setup</h3>
+                    <p>No Ollama, no GPU, no terminal. Sign up and start chatting in 30 seconds.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔐</div>
+                    <h3>Wallet Ready</h3>
+                    <p>Built-in BASE wallet support. Generate, import, or connect your existing wallet.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Works Everywhere</h3>
+                    <p>Web, mobile, tablet. Access your agent from any device, anywhere.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎮</div>
+                    <h3>Gamified</h3>
+                    <p>Earn XP, level up, unlock new personality modes. Your agent grows with you.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Simple Pricing</h2>
+                <p class="section-subtitle">Start free, pay as you grow</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Free</h3>
+                        <div class="price">
+                            <span class="currency">$</span>
+                            <span class="amount">0</span>
+                            <span class="period">/month</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><span class="check">✓</span> 25 messages per day</li>
+                        <li><span class="check">✓</span> GPT-3.5 Turbo</li>
+                        <li><span class="check">✓</span> Basic personality modes</li>
+                        <li><span class="check">✓</span> 1 wallet</li>
+                        <li><span class="check">✓</span> Web access</li>
+                    </ul>
+                    <a href="signup.html" class="btn btn-ghost btn-full">Get Started</a>
+                </div>
+                <div class="pricing-card featured">
+                    <div class="pricing-badge">Most Popular</div>
+                    <div class="pricing-header">
+                        <h3>Pro</h3>
+                        <div class="price">
+                            <span class="currency">$</span>
+                            <span class="amount">15</span>
+                            <span class="period">/month</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><span class="check">✓</span> Unlimited messages</li>
+                        <li><span class="check">✓</span> All LLM providers</li>
+                        <li><span class="check">✓</span> All personality modes</li>
+                        <li><span class="check">✓</span> 5 wallets</li>
+                        <li><span class="check">✓</span> Browser automation</li>
+                        <li><span class="check">✓</span> Telegram integration</li>
+                        <li><span class="check">✓</span> Priority support</li>
+                    </ul>
+                    <a href="signup.html" class="btn btn-primary btn-full">Start Pro Trial</a>
+                </div>
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>BYOK</h3>
+                        <div class="price">
+                            <span class="amount" style="font-size: 1.5rem;">Bring Your Own Key</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><span class="check">✓</span> Use your own API keys</li>
+                        <li><span class="check">✓</span> Pay providers directly</li>
+                        <li><span class="check">✓</span> No markup on tokens</li>
+                        <li><span class="check">✓</span> All Pro features</li>
+                        <li><span class="check">✓</span> Full control</li>
+                    </ul>
+                    <a href="signup.html" class="btn btn-ghost btn-full">Use Your Keys</a>
+                </div>
+            </div>
+            <div class="pricing-note">
+                <p>💡 <strong>Pro tip:</strong> Start with Free, upgrade when you need more power. All plans include the
+                    same core GLTCH experience.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2>Ready to meet your new favorite agent?</h2>
+            <p>Join the beta and get early access to GLTCH Cloud.</p>
+            <a href="#signup" class="btn btn-primary btn-large">
+                <span>Get Started Free</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="logo">
+                        <span class="logo-icon">💜</span>
+                        <span class="logo-text">GLTCH</span>
+                    </a>
+                    <p>She's not a chatbot. She's a console with an attitude.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Product</h4>
+                    <a href="#features">Features</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="#docs">Documentation</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Resources</h4>
+                    <a href="https://github.com/cyberdreadx/gltch_agent" target="_blank">GitHub</a>
+                    <a href="#discord">Discord</a>
+                    <a href="#blog">Blog</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <a href="#privacy">Privacy</a>
+                    <a href="#terms">Terms</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 GLTCH. Made with 💜 by <a href="https://x.com/cyberdreadx"
+                        target="_blank">@cyberdreadx</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
