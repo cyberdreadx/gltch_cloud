@@ -19,8 +19,14 @@ from auth import get_auth_dependency
 from models import LLMProvider, KeyMode, SubscriptionTier
 from llm import route_chat, FREE_TIER_MODEL
 from billing import calculate_cost, get_tier_limits, create_customer, create_checkout_session
+from personality import PersonalityMode, get_system_prompt, list_modes
 
 settings = get_settings()
+
+def is_admin(email: str) -> bool:
+    """Check if email is an admin"""
+    admin_list = [e.strip().lower() for e in settings.admin_emails.split(",")]
+    return email.lower() in admin_list
 
 # Data persistence directory
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
@@ -143,20 +149,26 @@ async def get_me(current_user: dict = Depends(get_auth_dependency())):
     
     if user_id not in users_db:
         # Auto-create user for dev mode
+        email = current_user.get("email", "user@gltch.app")
         users_db[user_id] = {
             "id": user_id,
-            "email": current_user.get("email", "user@gltch.app"),
+            "email": email,
             "callsign": "Operator",
             "tier": SubscriptionTier.FREE,
             "provider": LLMProvider.OPENAI,
             "key_mode": KeyMode.MANAGED,
+            "personality_mode": "operator",
             "messages_today": 0,
             "tokens_this_month": 0,
             "last_message_date": None,
             "created_at": datetime.utcnow().isoformat()
         }
+        persist_data()
     
-    return users_db[user_id]
+    user = users_db[user_id]
+    # Add computed fields
+    user["is_admin"] = is_admin(user.get("email", ""))
+    return user
 
 
 @app.patch("/api/auth/settings")
@@ -185,7 +197,39 @@ async def update_settings(
     if user_settings.xai_key:
         user["xai_key"] = user_settings.xai_key
     
+    persist_data()
     return {"message": "Settings updated", "user": user}
+
+
+# ============ Personality Endpoints ============
+
+@app.get("/api/personality/modes")
+async def get_personality_modes():
+    """Get available personality modes"""
+    return {"modes": list_modes()}
+
+
+@app.patch("/api/personality/mode")
+async def set_personality_mode(
+    mode: str,
+    current_user: dict = Depends(get_auth_dependency())
+):
+    """Set user's personality mode"""
+    user_id = current_user["user_id"]
+    
+    if user_id not in users_db:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Validate mode
+    try:
+        mode_enum = PersonalityMode(mode)
+    except ValueError:
+        raise HTTPException(status_code=400, detail=f"Invalid mode. Choose from: {[m.value for m in PersonalityMode]}")
+    
+    users_db[user_id]["personality_mode"] = mode
+    persist_data()
+    
+    return {"message": f"Personality mode set to {mode}", "mode": mode}
 
 
 # ============ Chat Endpoints ============
@@ -266,12 +310,21 @@ async def chat(
         }
         api_key = key_map.get(provider)
     
-    # Call LLM
+    # Get personality system prompt based on user's mode
+    personality_mode = user.get("personality_mode", "operator")
+    try:
+        mode_enum = PersonalityMode(personality_mode)
+    except ValueError:
+        mode_enum = PersonalityMode.OPERATOR
+    system_prompt = get_system_prompt(mode_enum)
+    
+    # Call LLM with personality
     result = await route_chat(
         provider=provider,
         messages=llm_messages,
         api_key=api_key,
-        model=model
+        model=model,
+        system_prompt=system_prompt
     )
     
     if "error" in result:

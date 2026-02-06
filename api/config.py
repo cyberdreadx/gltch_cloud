@@ -28,6 +28,9 @@ class Settings(BaseSettings):
     google_api_key: str = ""
     xai_api_key: str = ""
     
+    # Admin users (comma-separated emails)
+    admin_emails: str = "eharouge@gmail.com"
+    
     # Database
     database_url: str = "sqlite:///./gltch_cloud.db"
     
