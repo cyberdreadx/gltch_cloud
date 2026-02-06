@@ -15,6 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
         'settings': 'Settings'
     };
 
+    // Load user stats on page load
+    loadUserStats();
+
     navItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
@@ -115,10 +118,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateUsage(tokens, cost) {
-        const usageBadge = document.querySelector('.usage-badge span');
-        if (usageBadge) {
-            const currentTokens = parseInt(usageBadge.textContent.replace(/[^0-9]/g, '')) || 0;
-            usageBadge.textContent = `${(currentTokens + tokens).toLocaleString()} tokens today`;
+        const usageTokens = document.getElementById('usage-tokens');
+        if (usageTokens) {
+            const currentTokens = parseInt(usageTokens.textContent.replace(/[^0-9]/g, '')) || 0;
+            usageTokens.textContent = `${(currentTokens + tokens).toLocaleString()} tokens today`;
+        }
+    }
+
+    async function loadUserStats() {
+        try {
+            if (window.gltchAPI) {
+                // Fetch usage stats
+                const usage = await window.gltchAPI.getUsage();
+                const usageTokens = document.getElementById('usage-tokens');
+                if (usageTokens && usage) {
+                    usageTokens.textContent = `${usage.tokens_today?.toLocaleString() || 0} tokens today`;
+                }
+
+                // Fetch user info for provider
+                const user = await window.gltchAPI.getMe();
+                const providerName = document.getElementById('provider-name');
+                if (providerName && user) {
+                    const providerMap = {
+                        'openai': 'GPT-4o',
+                        'anthropic': 'Claude',
+                        'gemini': 'Gemini',
+                        'grok': 'Grok'
+                    };
+                    providerName.textContent = providerMap[user.provider] || 'GPT-4o';
+                }
+            }
+        } catch (error) {
+            console.warn('Could not load user stats:', error.message);
         }
     }
 
