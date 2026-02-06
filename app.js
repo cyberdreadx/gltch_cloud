@@ -64,6 +64,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentSessionId = null;
     let isLoading = false;
 
+    // Initialize GLTCH Orb
+    let gltchOrb = null;
+    if (window.GltchOrb) {
+        gltchOrb = new GltchOrb('gltch-orb');
+    }
+
     async function sendMessage() {
         const text = chatInput.value.trim();
         if (!text || isLoading) return;
@@ -73,9 +79,10 @@ document.addEventListener('DOMContentLoaded', () => {
         chatInput.value = '';
         chatInput.style.height = 'auto';
 
-        // Show loading state
+        // Show loading state - orb starts thinking
         isLoading = true;
         sendBtn.disabled = true;
+        if (gltchOrb) gltchOrb.setState('thinking');
         const loadingMsg = addMessage('assistant', '💭 Thinking...', true);
 
         try {
@@ -87,11 +94,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Remove loading message
                 loadingMsg.remove();
 
+                // Orb speaking state
+                if (gltchOrb) gltchOrb.setState('speaking');
+
                 // Add real response
                 addMessage('assistant', response.content);
 
                 // Update usage display
                 updateUsage(response.input_tokens + response.output_tokens, response.cost_usd);
+
+                // Return to idle after speaking animation
+                setTimeout(() => {
+                    if (gltchOrb) gltchOrb.setState('idle');
+                }, 2000);
             } else {
                 throw new Error('API not available');
             }
@@ -100,6 +115,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Remove loading message
             loadingMsg.remove();
+
+            // Orb speaking state
+            if (gltchOrb) gltchOrb.setState('speaking');
 
             // Fallback to demo responses
             const responses = [
@@ -111,6 +129,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 "I like how you think. Let me help with that."
             ];
             addMessage('assistant', responses[Math.floor(Math.random() * responses.length)]);
+
+            // Return to idle
+            setTimeout(() => {
+                if (gltchOrb) gltchOrb.setState('idle');
+            }, 2000);
         }
 
         isLoading = false;

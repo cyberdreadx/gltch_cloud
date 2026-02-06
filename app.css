@@ -212,6 +212,20 @@
     padding: 0 24px;
 }
 
+/* GLTCH Orb Container */
+.orb-container {
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    position: relative;
+    overflow: visible;
+}
+
+.orb-container canvas {
+    border-radius: 50%;
+}
+
 /* Terminal Window */
 .chat-messages {
     flex: 1;
