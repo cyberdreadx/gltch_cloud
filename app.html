@@ -46,12 +46,8 @@
         </nav>
 
         <div class="sidebar-footer">
-            <div class="user-info">
-                <div class="user-avatar">CD</div>
-                <div class="user-details">
-                    <span class="user-name">CyberDread</span>
-                    <span class="user-tier">Pro Plan</span>
-                </div>
+            <div class="user-info" id="user-info">
+                <div id="clerk-user-button"></div>
             </div>
         </div>
     </aside>
@@ -255,7 +251,38 @@
         </div>
     </main>
 
-    <script src="api-client.js"></script>
+    <!-- Clerk SDK -->
+    <script async crossorigin="anonymous"
+        data-clerk-publishable-key="pk_test_Zm9uZC13YWxydXMtMS5jbGVyay5hY2NvdW50cy5kZXYk"
+        src="https://fond-walrus-1.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+        type="text/javascript"></script>
+    <script>
+        window.addEventListener('load', async () => {
+            await Clerk.load();
+
+            if (!Clerk.user) {
+                // Not signed in, redirect to login
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Mount user button
+            Clerk.mountUserButton(document.getElementById('clerk-user-button'), {
+                afterSignOutUrl: '/login.html'
+            });
+
+            // Store token for API calls
+            const token = await Clerk.session.getToken();
+            if (token && window.gltchAPI) {
+                window.gltchAPI.setToken(token);
+            }
+
+            // Update user name in UI if needed
+            const userName = Clerk.user.firstName || Clerk.user.emailAddresses[0]?.emailAddress?.split('@')[0] || 'Operator';
+            console.log('Logged in as:', userName);
+        });
+    </script>
+    <script src="gltch-api.js"></script>
     <script src="app.js"></script>
 </body>
 
